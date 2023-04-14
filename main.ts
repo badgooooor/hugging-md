@@ -1,20 +1,8 @@
-import {
-	App,
-	Editor,
-	MarkdownView,
-	Modal,
-	Notice,
-	Plugin,
-	PluginSettingTab,
-	Setting,
-} from "obsidian";
-
-interface HuggingMDSettings {
-	apiKey: string;
-}
+import { App, Editor, MarkdownView, Modal, Notice, Plugin } from "obsidian";
+import { HuggingMDSettingTab } from "src/HuggingMDSettingTab";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
-	apiKey: "default",
+	apiKey: "hf_...",
 };
 
 export default class HuggingMD extends Plugin {
@@ -120,35 +108,5 @@ class SampleModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
-	}
-}
-
-class HuggingMDSettingTab extends PluginSettingTab {
-	plugin: HuggingMD;
-
-	constructor(app: App, plugin: HuggingMD) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-
-		containerEl.createEl("h2", { text: "HuggingMD Setting." });
-
-		new Setting(containerEl)
-			.setName("HuggingFace User Access token")
-			.setDesc("Access token for Inference API with `read` role")
-			.addText((text) =>
-				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
-						await this.plugin.saveSettings();
-					})
-			);
 	}
 }

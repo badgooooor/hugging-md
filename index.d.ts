@@ -1,0 +1,3 @@
+interface HuggingMDSettings {
+	apiKey: string;
+}
