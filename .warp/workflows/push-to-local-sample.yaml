@@ -14,7 +14,3 @@ arguments:
     - name: vault_plugin_directory
       description: Director of vault plugin
       default_value: your-directory
-
-author: Yuttakhan B.
-
-author_url:
