@@ -1,0 +1,20 @@
+name: [Example] Build plugin & push to local vault.
+
+command: |-
+    pnpm build
+    export VAULT_PLUGIN_DIRECTORY="{{vault_plugin_directory}}" &&
+    mkdir $VAULT_PLUGIN_DIRECTORY
+    cp ./{main.js,manifest.json,styles.css} $VAULT_PLUGIN_DIRECTORY
+tags:
+    - obsidian
+
+description: Build plugin & push to local vault.
+
+arguments:
+    - name: vault_plugin_directory
+      description: Director of vault plugin
+      default_value: your-directory
+
+author: Yuttakhan B.
+
+author_url:
