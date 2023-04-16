@@ -6,6 +6,9 @@ import type { HuggingMDSettings } from "./interfaces";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
+	defaultModel: {
+		summarization: "facebook/bart-large-cnn",
+	},
 };
 
 export default class HuggingMD extends Plugin {
@@ -37,29 +40,25 @@ export default class HuggingMD extends Plugin {
 
 				new Notice(`Sending inputs to HuggingFace for summarize.`);
 
-				const { summary_text } = await this.hf.summarization({
-					model: "facebook/bart-large-cnn",
-					inputs: selectedText,
-				});
+				try {
+					const { summary_text } = await this.hf.summarization({
+						model: this.settings.defaultModel.summarization,
+						inputs: selectedText,
+					});
 
-				editor.replaceRange(
-					`\n\n🤖 : ***${summary_text}***\n\n`,
-					editor.getCursor("to")
-				);
+					editor.replaceRange(
+						`\n\n🤖 : ***${summary_text}***\n\n`,
+						editor.getCursor("to")
+					);
 
-				new Notice(`Summarized requested content.`);
+					new Notice(`Summarized requested content.`);
+				} catch (err) {
+					new Notice(`Error during requesting.`);
+				}
 			},
 		});
 
 		this.addSettingTab(new HuggingMDSettingTab(this.app, this));
-
-		this.registerDomEvent(document, "click", (evt: MouseEvent) => {
-			console.log("click", evt);
-		});
-
-		this.registerInterval(
-			window.setInterval(() => console.log("setInterval"), 5 * 60 * 1000)
-		);
 	}
 
 	onunload() {

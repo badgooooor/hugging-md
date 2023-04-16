@@ -28,5 +28,17 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+
+		new Setting(containerEl)
+			.setName("Default summarization model")
+			.addText((text) =>
+				text
+					.setPlaceholder("facebook/bart-large-cnn")
+					.setValue(this.plugin.settings.defaultModel.summarization)
+					.onChange(async (value) => {
+						this.plugin.settings.defaultModel.summarization = value;
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 }
