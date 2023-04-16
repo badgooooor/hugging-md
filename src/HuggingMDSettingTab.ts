@@ -31,9 +31,13 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Default summarization model")
-			.addText((text) =>
-				text
-					.setPlaceholder("facebook/bart-large-cnn")
+			.addDropdown((component) =>
+				component
+					.addOptions({
+						"facebook/bart-large-cnn": "facebook/bart-large-cnn",
+						"google/pegasus-cnn_dailymail":
+							"google/pegasus-cnn_dailymail",
+					})
 					.setValue(this.plugin.settings.defaultModel.summarization)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultModel.summarization = value;
