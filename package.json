@@ -5,23 +5,30 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"build": "tsc -noEmit -skipLibCheck && npx svelte-check && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
+		"@huggingface/inference": "^1.8.0",
 		"esbuild": "0.17.3",
+		"esbuild-svelte": "^0.7.3",
+		"@sveltejs/vite-plugin-svelte": "^1.0.1",
+		"@tsconfig/svelte": "^3.0.0",
+		"@types/node": "^16.11.6",
+		"@typescript-eslint/eslint-plugin": "5.32.0",
+		"@typescript-eslint/parser": "5.32.0",
+		"builtin-modules": "3.3.0",
+		"eslint": "^8.21.0",
+		"eslint-plugin-svelte3": "^4.0.0",
 		"obsidian": "latest",
+		"svelte": "^3.49.0",
+		"svelte-check": "^2.8.0",
+		"svelte-preprocess": "^4.10.7",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
-	},
-	"dependencies": {
-		"@huggingface/inference": "^1.8.0"
+		"typescript": "4.7.4",
+		"vite": "^3.0.0"
 	}
 }
