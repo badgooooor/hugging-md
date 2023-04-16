@@ -2,6 +2,7 @@ import { HfInference } from "@huggingface/inference";
 import { Editor, MarkdownView, Notice, Plugin, WorkspaceLeaf } from "obsidian";
 import { HuggingMDSettingTab } from "./HuggingMDSettingTab";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./ItemView";
+import type { HuggingMDSettings } from "./interfaces";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
@@ -36,12 +37,13 @@ export default class HuggingMD extends Plugin {
 
 				new Notice(`Sending inputs to HuggingFace for summarize.`);
 
-				const response = await this.hf.summarization({
+				const { summary_text } = await this.hf.summarization({
 					model: "facebook/bart-large-cnn",
 					inputs: selectedText,
 				});
+
 				editor.replaceRange(
-					`\n\n🤖 : ***${response.summary_text}***\n\n`,
+					`\n\n🤖 : ***${summary_text}***\n\n`,
 					editor.getCursor("to")
 				);
 
