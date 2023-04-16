@@ -1,5 +1,5 @@
-import HuggingMD from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
+import type HuggingMD from "./main";
 
 export class HuggingMDSettingTab extends PluginSettingTab {
 	plugin: HuggingMD;
@@ -25,6 +25,22 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.apiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Default summarization model")
+			.addDropdown((component) =>
+				component
+					.addOptions({
+						"facebook/bart-large-cnn": "facebook/bart-large-cnn",
+						"google/pegasus-cnn_dailymail":
+							"google/pegasus-cnn_dailymail",
+					})
+					.setValue(this.plugin.settings.defaultModel.summarization)
+					.onChange(async (value) => {
+						this.plugin.settings.defaultModel.summarization = value;
 						await this.plugin.saveSettings();
 					})
 			);
