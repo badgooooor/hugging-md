@@ -1,5 +1,5 @@
-import HuggingMD from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
+import type HuggingMD from "./main";
 
 export class HuggingMDSettingTab extends PluginSettingTab {
 	plugin: HuggingMD;
