@@ -47,7 +47,7 @@ export default class HuggingMD extends Plugin {
 					});
 
 					editor.replaceRange(
-						`\n\n🤖 : ***${summary_text}***\n\n`,
+						`\n\n🤖 [${this.settings.defaultModel.summarization}] : ***${summary_text}***\n\n`,
 						editor.getCursor("to")
 					);
 
