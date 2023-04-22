@@ -16,6 +16,7 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "HuggingMD Setting." });
 
+		// API key
 		new Setting(containerEl)
 			.setName("HuggingFace User Access token")
 			.setDesc("Access token for Inference API with `read` role")
@@ -29,6 +30,7 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 					})
 			);
 
+		// Summarization
 		new Setting(containerEl)
 			.setName("Default summarization model")
 			.addDropdown((component) =>
@@ -41,6 +43,42 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.defaultModel.summarization)
 					.onChange(async (value) => {
 						this.plugin.settings.defaultModel.summarization = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		// Token classification
+		new Setting(containerEl)
+			.setName("Default token classification model")
+			.addDropdown((component) =>
+				component
+					.addOptions({
+						"Davlan/distilbert-base-multilingual-cased-ner-hrl":
+							"Davlan/distilbert-base-multilingual-cased-ner-hrl",
+						"dslim/bert-base-NER": "dslim/bert-base-NER",
+						"dbmdz/bert-large-cased-finetuned-conll03-english":
+							"dbmdz/bert-large-cased-finetuned-conll03-english",
+					})
+					.setValue(
+						this.plugin.settings.defaultModel.tokenClassification
+					)
+					.onChange(async (value) => {
+						this.plugin.settings.defaultModel.tokenClassification =
+							value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Replace token classification result")
+			.addToggle((component) =>
+				component
+					.setValue(
+						this.plugin.settings.tokenClassification.replaceResult
+					)
+					.onChange(async (value) => {
+						this.plugin.settings.tokenClassification.replaceResult =
+							value;
 						await this.plugin.saveSettings();
 					})
 			);

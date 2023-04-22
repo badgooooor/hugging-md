@@ -8,6 +8,11 @@ const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
 	defaultModel: {
 		summarization: "facebook/bart-large-cnn",
+		tokenClassification:
+			"Davlan/distilbert-base-multilingual-cased-ner-hrl",
+	},
+	tokenClassification: {
+		replaceResult: true,
 	},
 };
 
@@ -70,7 +75,7 @@ export default class HuggingMD extends Plugin {
 
 				try {
 					const response = await this.hf.tokenClassification({
-						model: "dbmdz/bert-large-cased-finetuned-conll03-english",
+						model: this.settings.defaultModel.tokenClassification,
 						inputs: selectedText,
 					});
 
@@ -88,7 +93,14 @@ export default class HuggingMD extends Plugin {
 						})
 						.join(" ");
 
-					editor.replaceSelection(resultText);
+					if (this.settings.tokenClassification.replaceResult) {
+						editor.replaceSelection(resultText);
+					} else {
+						editor.replaceRange(
+							`\n\n🤖 [${this.settings.defaultModel.tokenClassification}] : ***${resultText}***\n\n`,
+							editor.getCursor("to")
+						);
+					}
 					new Notice(`Extract requested content.`);
 				} catch (err) {
 					new Notice(`Error during requesting.`);
