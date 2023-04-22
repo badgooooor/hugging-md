@@ -2,7 +2,7 @@ import { HfInference } from "@huggingface/inference";
 import { Editor, MarkdownView, Notice, Plugin, WorkspaceLeaf } from "obsidian";
 import { HuggingMDSettingTab } from "./HuggingMDSettingTab";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./ItemView";
-import type { HuggingMDSettings } from "./interfaces";
+import type { ActionType, HuggingMDSettings } from "./interfaces";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
@@ -19,6 +19,8 @@ const DEFAULT_SETTINGS: HuggingMDSettings = {
 export default class HuggingMD extends Plugin {
 	settings: HuggingMDSettings;
 	hf: HfInference;
+
+	latestAction: ActionType;
 
 	// Test example view.
 	private view: ExampleView;
@@ -41,6 +43,8 @@ export default class HuggingMD extends Plugin {
 			id: "summarization-command",
 			name: "Summarize selected text",
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				this.latestAction = "summarization";
+
 				const selectedText = editor.getSelection();
 
 				new Notice(`Sending inputs to HuggingFace for summarize.`);
@@ -67,6 +71,7 @@ export default class HuggingMD extends Plugin {
 			id: "token-classification-command",
 			name: "Extract token from selected text",
 			editorCallback: async (editor: Editor) => {
+				this.latestAction = "token-classification";
 				const selectedText = editor.getSelection();
 
 				new Notice(
