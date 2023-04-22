@@ -34,7 +34,7 @@ export default class HuggingMD extends Plugin {
 
 		this.addCommand({
 			id: "summarization-command",
-			name: "Add Summarization command",
+			name: "Summarize selected text",
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const selectedText = editor.getSelection();
 
@@ -52,6 +52,44 @@ export default class HuggingMD extends Plugin {
 					);
 
 					new Notice(`Summarized requested content.`);
+				} catch (err) {
+					new Notice(`Error during requesting.`);
+				}
+			},
+		});
+
+		this.addCommand({
+			id: "token-classification-command",
+			name: "Extract token from selected text",
+			editorCallback: async (editor: Editor) => {
+				const selectedText = editor.getSelection();
+
+				new Notice(
+					`Sending inputs to HuggingFace for extracting token.`
+				);
+
+				try {
+					const response = await this.hf.tokenClassification({
+						model: "dbmdz/bert-large-cased-finetuned-conll03-english",
+						inputs: selectedText,
+					});
+
+					const wordList = response.map((item) => item.word);
+					const splitedText = selectedText.split(" ");
+
+					const resultText = splitedText
+						.map((text) => {
+							const wordIndex = wordList.indexOf(text);
+							if (wordIndex !== -1) {
+								return `<mark>${text} [${response[wordIndex].entity_group}]</mark>`;
+							}
+
+							return text;
+						})
+						.join(" ");
+
+					editor.replaceSelection(resultText);
+					new Notice(`Extract requested content.`);
 				} catch (err) {
 					new Notice(`Error during requesting.`);
 				}
