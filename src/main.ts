@@ -81,10 +81,6 @@ export default class HuggingMD extends Plugin {
 
 					const summaryText = await service.summarize(selectedText);
 
-					// editor.replaceRange(
-					// 	`\n\n🤖 [${this.settings.defaultModel.summarization}] : ***${summary_text}***\n\n`,
-					// 	editor.getCursor("to")
-					// );
 					const codeBlockResult = createCodeBlock(
 						"summary-result",
 						summaryText
