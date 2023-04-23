@@ -6,6 +6,8 @@ HuggingFace assisted Obsidian plugin, bundling text inferences e.g. summarizatio
 
 -   Summarize selected text (as proof-of-concept)
     <img src="./assets/preview-hugging-md.gif" width="640" height="486" />
+-   Token classification with selected text
+-   Currently, experimenting on Svelte component and injecting to markdown component.
 
 ## Installation
 
