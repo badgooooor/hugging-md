@@ -1,8 +1,19 @@
 import { HfInference } from "@huggingface/inference";
-import { Editor, MarkdownView, Notice, Plugin, WorkspaceLeaf } from "obsidian";
+import {
+	App,
+	Editor,
+	MarkdownView,
+	Notice,
+	Plugin,
+	WorkspaceLeaf,
+	type PluginManifest,
+} from "obsidian";
 import { HuggingMDSettingTab } from "./HuggingMDSettingTab";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./ItemView";
 import type { ActionType, HuggingMDSettings } from "./interfaces";
+import { SummaryMarkdown } from "./markdown/Summarization";
+import { createCodeBlock } from "./utils";
+import { SummarizationService } from "./services";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
@@ -21,9 +32,16 @@ export default class HuggingMD extends Plugin {
 	hf: HfInference;
 
 	latestAction: ActionType;
+	private readonly testResult: SummaryMarkdown;
 
 	// Test example view.
 	private view: ExampleView;
+
+	constructor(app: App, pluginManifest: PluginManifest) {
+		super(app, pluginManifest);
+
+		this.testResult = new SummaryMarkdown(app);
+	}
 
 	async onload() {
 		await this.loadSettings();
@@ -39,6 +57,12 @@ export default class HuggingMD extends Plugin {
 			this.activateView();
 		});
 
+		// Bind summary
+		this.registerMarkdownCodeBlockProcessor(
+			"summary-result",
+			this.testResult.onNewBlock.bind(this.testResult)
+		);
+
 		this.addCommand({
 			id: "summarization-command",
 			name: "Summarize selected text",
@@ -50,13 +74,23 @@ export default class HuggingMD extends Plugin {
 				new Notice(`Sending inputs to HuggingFace for summarize.`);
 
 				try {
-					const { summary_text } = await this.hf.summarization({
-						model: this.settings.defaultModel.summarization,
-						inputs: selectedText,
-					});
+					const service = new SummarizationService(
+						this.settings.apiKey,
+						this.settings.defaultModel.summarization
+					);
 
+					const summaryText = await service.summarize(selectedText);
+
+					// editor.replaceRange(
+					// 	`\n\n🤖 [${this.settings.defaultModel.summarization}] : ***${summary_text}***\n\n`,
+					// 	editor.getCursor("to")
+					// );
+					const codeBlockResult = createCodeBlock(
+						"summary-result",
+						summaryText
+					);
 					editor.replaceRange(
-						`\n\n🤖 [${this.settings.defaultModel.summarization}] : ***${summary_text}***\n\n`,
+						codeBlockResult,
 						editor.getCursor("to")
 					);
 
