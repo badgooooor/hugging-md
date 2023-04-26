@@ -12,8 +12,8 @@ import { HuggingMDSettingTab } from "./HuggingMDSettingTab";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./ItemView";
 import type { ActionType, HuggingMDSettings } from "./interfaces";
 import { SummaryMarkdown } from "./markdown/Summarization";
-import { createCodeBlock } from "./utils";
-import { SummarizationService } from "./services";
+import { createCodeBlock, stringToHexColor } from "./utils";
+import { SummarizationService, TokenClassificationService } from "./services";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
@@ -109,10 +109,12 @@ export default class HuggingMD extends Plugin {
 				);
 
 				try {
-					const response = await this.hf.tokenClassification({
-						model: this.settings.defaultModel.tokenClassification,
-						inputs: selectedText,
-					});
+					const service = new TokenClassificationService(
+						this.settings.apiKey,
+						this.settings.defaultModel.tokenClassification
+					);
+
+					const response = await service.extract(selectedText);
 
 					const wordList = response.map((item) => item.word);
 					const splitedText = selectedText.split(" ");
@@ -120,9 +122,9 @@ export default class HuggingMD extends Plugin {
 					const resultText = splitedText
 						.map((text) => {
 							const wordIndex = wordList.indexOf(text);
-							if (wordIndex !== -1) {
-								return `<mark>${text} [${response[wordIndex].entity_group}]</mark>`;
-							}
+							const hexColor = stringToHexColor(text);
+							if (wordIndex !== -1)
+								return `<span style="background-color:${hexColor}">${text} [${response[wordIndex].entity_group}]</span>`;
 
 							return text;
 						})
