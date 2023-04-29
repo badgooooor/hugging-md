@@ -82,5 +82,23 @@ export class HuggingMDSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+
+		// Text generation
+		new Setting(containerEl)
+			.setName("Default text generation model")
+			.addDropdown((component) =>
+				component
+					.addOptions({
+						"gpt2-medium": "gpt2-medium",
+						gpt2: "gpt2",
+						"bigscience/bloom-560m": "bigscience/bloom-560m",
+					})
+					.setValue(this.plugin.settings.defaultModel.textGeneration)
+					.onChange(async (value) => {
+						this.plugin.settings.defaultModel.textGeneration =
+							value;
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 }

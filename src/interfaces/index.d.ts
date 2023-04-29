@@ -11,6 +11,7 @@ export interface HuggingMDSettings {
 	defaultModel: {
 		summarization: string;
 		tokenClassification: string;
+		textGeneration: string;
 	};
 	tokenClassification: {
 		replaceResult: boolean;

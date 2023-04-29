@@ -25,6 +25,7 @@ const DEFAULT_SETTINGS: HuggingMDSettings = {
 		summarization: "facebook/bart-large-cnn",
 		tokenClassification:
 			"Davlan/distilbert-base-multilingual-cased-ner-hrl",
+		textGeneration: "gpt2-medium",
 	},
 	tokenClassification: {
 		replaceResult: true,
@@ -153,7 +154,7 @@ export default class HuggingMD extends Plugin {
 				try {
 					const service = new TextGenerationService(
 						this.settings.apiKey,
-						"gpt2-medium"
+						this.settings.defaultModel.textGeneration
 					);
 
 					const response = await service.generate(selectedText);
