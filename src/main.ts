@@ -12,8 +12,12 @@ import { HuggingMDSettingTab } from "./HuggingMDSettingTab";
 import { ExampleView, VIEW_TYPE_EXAMPLE } from "./ItemView";
 import type { ActionType, HuggingMDSettings } from "./interfaces";
 import { SummaryMarkdown } from "./markdown/Summarization";
-import { createCodeBlock, stringToHexColor } from "./utils";
-import { SummarizationService, TokenClassificationService } from "./services";
+import { stringToHexColor } from "./utils";
+import {
+	SummarizationService,
+	TextGenerationService,
+	TokenClassificationService,
+} from "./services";
 
 const DEFAULT_SETTINGS: HuggingMDSettings = {
 	apiKey: "hf_...",
@@ -57,12 +61,6 @@ export default class HuggingMD extends Plugin {
 			this.activateView();
 		});
 
-		// Bind summary
-		this.registerMarkdownCodeBlockProcessor(
-			"summary-result",
-			this.testResult.onNewBlock.bind(this.testResult)
-		);
-
 		this.addCommand({
 			id: "summarization-command",
 			name: "Summarize selected text",
@@ -81,12 +79,8 @@ export default class HuggingMD extends Plugin {
 
 					const summaryText = await service.summarize(selectedText);
 
-					const codeBlockResult = createCodeBlock(
-						"summary-result",
-						summaryText
-					);
 					editor.replaceRange(
-						codeBlockResult,
+						`\n\n🤖 : ***${summaryText}***\n\n`,
 						editor.getCursor("to")
 					);
 
@@ -141,6 +135,31 @@ export default class HuggingMD extends Plugin {
 					new Notice(`Extract requested content.`);
 				} catch (err) {
 					new Notice(`Error during requesting.`);
+				}
+			},
+		});
+
+		this.addCommand({
+			id: "text-generation-command",
+			name: "Generate text from selected text",
+			editorCallback: async (editor: Editor) => {
+				this.latestAction = "text-generation";
+				const selectedText = editor.getSelection();
+
+				new Notice(
+					`Sending inputs to HuggingFace for generating text.`
+				);
+
+				try {
+					const service = new TextGenerationService(
+						this.settings.apiKey,
+						"gpt2-medium"
+					);
+
+					const response = await service.generate(selectedText);
+					editor.replaceSelection(response);
+				} catch (err) {
+					new Notice("Error during requesting.");
 				}
 			},
 		});

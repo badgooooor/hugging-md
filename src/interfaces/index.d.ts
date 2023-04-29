@@ -1,6 +1,10 @@
 import type { MarkdownPostProcessorContext } from "obsidian";
 
-export type ActionType = "summarization" | "token-classification" | undefined;
+export type ActionType =
+	| "summarization"
+	| "token-classification"
+	| "text-generation"
+	| undefined;
 
 export interface HuggingMDSettings {
 	apiKey: string;
